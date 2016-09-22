@@ -125,6 +125,19 @@ class DataTransformer {
    *    cv::Mat containing the data to be transformed.
    */
   vector<int> InferBlobShape(const cv::Mat& cv_img);
+  /**
+  * Kuznech added this:
+  * @brief Applies the transformation defined in the data layer's
+  * transform_param block to a cv::Mat.
+  * Uses random scaling
+  *
+  * @param cv_img
+  *    cv::Mat containing the data to be transformed.
+  * @param transformed_blob
+  *    This is destination blob. It can be part of top blob's data if
+  *    set_cpu_data() is used. See image_data_layer.cpp for an example.
+  */
+  vector<int> TransformRandomScale(const cv::Mat& cv_img, Blob<Dtype>* transformed_blob);
 #endif  // USE_OPENCV
 
  protected:

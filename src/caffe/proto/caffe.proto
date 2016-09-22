@@ -219,7 +219,7 @@ message SolverParameter {
 
   // RMSProp decay value
   // MeanSquare(t) = rms_decay*MeanSquare(t-1) + (1-rms_decay)*SquareGradient(t)
-  optional float rms_decay = 38 [default = 0.99];
+  optional float rms_decay = 38 [default=0.99];
 
   // If true, print information about the state of the net that may help with
   // debugging learning problems.
@@ -384,6 +384,9 @@ message LayerParameter {
   optional LogParameter log_param = 134;
   optional LRNParameter lrn_param = 118;
   optional MemoryDataParameter memory_data_param = 119;
+  optional MemoryROIParameter memory_roi_param = 8266710;
+  optional MultiBoxConfidenceLossParameter multibox_confidence_loss_param = 8266712; // multibox confidence loss (for beta)
+  optional MultiBoxImageDataParameter multibox_image_data_param = 8266713; // multibox image data
   optional MVNParameter mvn_param = 120;
   optional ParameterParameter parameter_param = 145;
   optional PoolingParameter pooling_param = 121;
@@ -394,6 +397,7 @@ message LayerParameter {
   optional ReductionParameter reduction_param = 136;
   optional ReLUParameter relu_param = 123;
   optional ReshapeParameter reshape_param = 133;
+  optional ROIPoolingParameter roi_pooling_param = 8266711;
   optional ScaleParameter scale_param = 142;
   optional SigmoidParameter sigmoid_param = 124;
   optional SoftmaxParameter softmax_param = 125;
@@ -426,6 +430,16 @@ message TransformationParameter {
   optional bool force_color = 6 [default = false];
   // Force the decoded image to have 1 color channels.
   optional bool force_gray = 7 [default = false];
+  // Added by Kuznech Inc:
+  // min random scaling value for width
+  optional float min_random_scale_width = 8 [default = 1.0];
+  //max random scaling value for width
+  optional float max_random_scale_width = 9 [default = 1.0];
+  // min random scaling value for height
+  optional float min_random_scale_height = 10 [default = 1.0];
+  //max random scaling value for height
+  optional float max_random_scale_height = 11 [default = 1.0];
+  optional bool keep_aspect_ratio = 12 [default = true];
 }
 
 // Message that stores parameters shared by loss layers
@@ -864,6 +878,40 @@ message MemoryDataParameter {
   optional uint32 width = 4;
 }
 
+// Message that stores parameters used by MemoryROILayer
+message MemoryROIParameter {
+  optional uint32 batch_size = 1;
+}
+
+// Message that stores parameters used by MultiBoxConfidenceLoss
+message MultiBoxConfidenceLossParameter {
+  optional float beta = 1 [default = 0.8];
+}
+
+// Message that stores parameters used by MultiBoxImageDataLayer
+message MultiBoxImageDataParameter {
+  // Specify the data source.
+  optional string source = 1;
+  // Specify the batch size.
+  optional uint32 batch_size = 4;
+  // The rand_skip variable is for the data layer to skip a few data points
+  // to avoid all asynchronous sgd clients to start at the same point. The skip
+  // point would be set as rand_skip * rand(0,1). Note that rand_skip should not
+  // be larger than the number of keys in the database.
+  optional uint32 rand_skip = 7 [default = 0];
+  // Whether or not MultiBoxImageDataLayer should shuffle the list of files at every epoch.
+  optional bool shuffle = 8 [default = false];
+  // It will also resize images if new_height or new_width are not zero.
+  optional uint32 new_height = 9 [default = 0];
+  optional uint32 new_width = 10 [default = 0];
+  // Specify if the images are color or gray
+  optional bool is_color = 11 [default = true];
+  optional string root_folder = 12 [default = ""];
+  optional uint32 shape_dim = 13 [default = 4];
+  optional string priors_file = 14;
+  optional float threshold = 15 [default = 0.5];
+}
+
 message MVNParameter {
   // This parameter can be set to false to normalize mean only
   optional bool normalize_variance = 1 [default = true];
@@ -1055,6 +1103,17 @@ message ReshapeParameter {
   //
   optional int32 axis = 2 [default = 0];
   optional int32 num_axes = 3 [default = -1];
+}
+
+// Message that stores parameters used by ROIPoolingLayer
+message ROIPoolingParameter {
+  // Pad, kernel size, and stride are all given as a single value for equal
+  // dimensions in height and width or as Y, X pairs.
+  optional uint32 pooled_h = 1 [default = 0]; // The pooled output height
+  optional uint32 pooled_w = 2 [default = 0]; // The pooled output width
+  // Multiplicative spatial scale factor to translate ROI coords from their
+  // input scale to the scale used when pooling
+  optional float spatial_scale = 3 [default = 1];
 }
 
 message ScaleParameter {

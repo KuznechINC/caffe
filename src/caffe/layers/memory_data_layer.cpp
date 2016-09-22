@@ -77,6 +77,26 @@ void MemoryDataLayer<Dtype>::AddMatVector(const vector<cv::Mat>& mat_vector,
   Reset(top_data, top_label, num);
   has_new_data_ = true;
 }
+
+template <typename Dtype>
+void MemoryDataLayer<Dtype>::AddCvMat(const cv::Mat& image, const int label)
+{
+  CHECK(!has_new_data_) <<
+      "Can't add mat until current data has been consumed.";
+  size_t num = 1;
+  height_ = image.rows;
+  width_ = image.cols;
+  added_data_.Reshape(num, channels_, height_, width_);
+  added_label_.Reshape(num,1,1,1);
+  // Apply data transformations (mirror, scale, crop...)
+  this->data_transformer_->Transform(image, &added_data_);
+  // Copy Labels
+  Dtype* top_label = added_label_.mutable_cpu_data();
+  top_label[0] = label;
+  Dtype* top_data = added_data_.mutable_cpu_data();
+  Reset(top_data, top_label, num);
+  has_new_data_ = true;
+}
 #endif  // USE_OPENCV
 
 template <typename Dtype>
