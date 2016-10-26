@@ -8,8 +8,11 @@ template <typename Dtype>
 void MemoryROILayer<Dtype>::DataLayerSetUp(const vector<Blob<Dtype>*>& bottom,
      const vector<Blob<Dtype>*>& top) {
   batch_size_ = this->layer_param_.memory_roi_param().batch_size();
-  added_rois_.Reshape(batch_size, 5);
-  rois_ = nullptr;
+  std::vector<int> shape;
+  shape.push_back(batch_size_);
+  shape.push_back(5);
+  added_rois_.Reshape(shape);
+  rois_ = NULL;
   added_rois_.cpu_data();
 }
 
@@ -22,7 +25,10 @@ void MemoryROILayer<Dtype>::AddROIsWithLevels(const std::vector<int>& levels,
   CHECK_GT(num_rois_,0) << "There are no rois passed into the Net";
   CHECK_EQ(num_rois_, num_lvls) << "Number of rois and levels must be the same";
 
-  added_rois_.Reshape(num_rois_, 5);
+  std::vector<int> shape;
+  shape.push_back(num_rois_);
+  shape.push_back(5);
+  added_rois_.Reshape(shape);
 
   rois_ = added_rois_.mutable_cpu_data();
   //copy levels and rois into an array raw by raw: [level, x1, y1, x2, y2]
@@ -45,7 +51,10 @@ template <typename Dtype>
 void MemoryROILayer<Dtype>::Forward_cpu(const vector<Blob<Dtype>*>& bottom,
       const vector<Blob<Dtype>*>& top) {
   CHECK(rois_) << "Rois have to be set first by calling AddROIs...";
-  top[0]->Reshape(num_rois_, 5);
+  std::vector<int> shape;
+  shape.push_back(num_rois_);
+  shape.push_back(5);
+  top[0]->Reshape(shape);
   top[0]->set_cpu_data(rois_);
 }
 
