@@ -27,8 +27,12 @@ class MemoryROILayer: public BaseDataLayer<Dtype> {
   virtual inline int ExactNumTopBlobs() const { return 1; }
 
   virtual void AddROIsWithLevels( const std::vector<int>& levels,
-          const vector<vector<int> >& rois);
+                                  const vector<vector<int> >& rois);
+  virtual void AddROIsWithLevels( const cv::Mat& levels,
+                                  const cv::Mat& rois);
+
   virtual void AddROIsSingleLevel(const vector<vector<int> >& rois);
+  virtual void AddROIsSingleLevel(const cv::Mat& rois);
 
   size_t num_rois() { return num_rois_; }
   size_t batch_size() {return batch_size_;}
