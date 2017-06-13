@@ -131,10 +131,6 @@ void MultiBoxLocationLossLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>& 
   }
 }
 
-#ifdef CPU_ONLY
-STUB_GPU(MultiBoxLocationLossLayer);
-#endif
-
 INSTANTIATE_CLASS(MultiBoxLocationLossLayer);
 REGISTER_LAYER_CLASS(MultiBoxLocationLoss);
 

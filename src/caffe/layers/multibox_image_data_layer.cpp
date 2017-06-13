@@ -440,11 +440,6 @@ void MultiBoxImageDataLayer<Dtype>::JoinPrefetchThread() {
   StopInternalThread();
 }
 
-#ifdef CPU_ONLY
-STUB_GPU_FORWARD(MultiBoxImageDataLayer, Forward);
-#endif
-
-
 INSTANTIATE_CLASS(MultiBoxImageDataLayer);
 REGISTER_LAYER_CLASS(MultiBoxImageData);
 

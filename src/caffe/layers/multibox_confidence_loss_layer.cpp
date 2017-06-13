@@ -181,10 +181,6 @@ void MultiBoxConfidenceLossLayer<Dtype>::Backward_cpu(const vector<Blob<Dtype>*>
   }
 }
 
-#ifdef CPU_ONLY
-STUB_GPU(MultiBoxConfidenceLossLayer);
-#endif
-
 INSTANTIATE_CLASS(MultiBoxConfidenceLossLayer);
 REGISTER_LAYER_CLASS(MultiBoxConfidenceLoss);
 
